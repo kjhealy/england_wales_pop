@@ -152,3 +152,69 @@ p_pyr_ani <- p + geom_ribbon(alpha = 0.5) +
 ## ani.res option needs a relatively recent version of the animate library
 gganimate(p_pyr_ani, filename = "figures/eng-wa-pop-pyr.gif",
           ani.width = 1000, ani.height = 1600, ani.res = 200)
+
+
+
+
+### Marching labels
+
+ww1m_labs <- data.frame(yr = 1961:2008, y = -1.5, age = 43:90,
+                       yend = -0.75, lab = "Born 1918",
+                       base = 0, group = "Males", gen = "ww1m")
+
+
+ww2m_labs <- data.frame(yr = 1961:2014, y = -1.85, age = 14:67,
+                       yend = NA, lab = "Born 1947",
+                       base = 0, group = "Males", gen = "ww2m")
+
+
+xm_labs <- data.frame(yr = 1977:2014, y = -1.5, age = 0:37,
+                       yend = -1.2, lab = "Born 1970",
+                       base = 0, group = "Males", gen = "x70m")
+
+ww1f_labs <- data.frame(yr = 1961:2008, y = 1.5, age = 41:88,
+                       yend = NA, lab = "Born 1920",
+                       base = 0, group = "Females", gen = "ww1f")
+
+
+x64f_labs <- data.frame(yr = 1964:2014, y = 1.85, age = 0:50,
+                       yend = NA, lab = "Born 1964",
+                       base = 0, group = "Females", gen = "ww2")
+
+
+gen_labs <- rbind(ww1m_labs, ww2m_labs, xm_labs, ww1f_labs, x64f_labs)
+
+
+p <- ggplot(data = ages_pyr,
+            mapping = aes(x = age,
+                          frame = yr))
+
+p_pyr_ani <- p + geom_ribbon(alpha = 0.5, mapping = aes(ymin = base, ymax = pct, fill = group)) +
+    geom_text(data = subset(gen_labs, yr > 1984 & yr < 1988),
+              mapping = aes(x = age, y = y, label = lab),
+              size = rel(1.8)) +
+    geom_segment(data = subset(gen_labs, yr > 1984 & yr < 1988),
+              mapping = aes(x = age, xend = age, y = y + 0.19, yend = yend),
+              size = rel(0.2), color = "gray30") +
+    scale_y_continuous(labels = abs, limits = max(ages_lon$pct, na.rm = TRUE) * c(-1,1)) +
+    scale_x_continuous(breaks = seq(10, 80, 10)) +
+    scale_fill_manual(values = bly_palette) +
+    guides(fill = guide_legend(reverse = TRUE)) +
+    labs(x = "Age", y = "Percent of Population",
+         title = "Age Distribution of the Population of England and Wales:",
+         subtitle = "Age is top-coded at 85 before 1971 and 90 thereafter.",
+         caption = "Kieran Healy / kieranhealy.org / Data: UK ONS.",
+         fill = "Group") +
+    theme_minimal() +
+    theme(legend.position = "bottom",
+          plot.title = element_text(size = rel(0.8), face = "bold"),
+          plot.subtitle = element_text(size = rel(0.8)),
+          plot.caption = element_text(size = rel(0.8)),
+          axis.text.y = element_text(size = rel(0.9)),
+          axis.text.x = element_text(size = rel(0.9))) +
+    coord_flip()
+
+## This will take a while to run.
+## ani.res option needs a relatively recent version of the animate library
+gganimate(p_pyr_ani, filename = "figures/eng-wa-pop-pyr-labs.gif",
+          ani.width = 1000, ani.height = 1600, ani.res = 200)
