@@ -182,7 +182,7 @@ ww2m_labs <- ww2m_labs %>% rename(y = pct) %>%
 
 
 xm_labs <- data.frame(yr = 1977:2014, age = 0:37,
-                       lab = "Born 1970",
+                       lab = "Born 1977",
                        base = 0, group = "Males", gen = "x70m")
 
 xm_labs <- left_join(xm_labs, ages_pyr)
