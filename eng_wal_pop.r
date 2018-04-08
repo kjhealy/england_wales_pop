@@ -158,28 +158,63 @@ gganimate(p_pyr_ani, filename = "figures/eng-wa-pop-pyr.gif",
 
 ### Marching labels
 
-ww1m_labs <- data.frame(yr = 1961:2008, y = -1.5, age = 43:90,
-                       yend = -0.75, lab = "Born 1918",
-                       base = 0, group = "Males", gen = "ww1m")
+ww1m_labs <- data.frame(yr = 1961:2008, age = 43:90,
+                        lab = "Born 1918", base = 0,
+                        group = "Males", gen = "ww1m")
+
+ww1m_labs <- left_join(ww1m_labs, ages_pyr)
+
+ww1m_labs <- ww1m_labs %>% rename(y = pct) %>%
+    mutate(y = y - 0.05,
+           yend = y - 0.025)
 
 
-ww2m_labs <- data.frame(yr = 1961:2014, y = -1.85, age = 14:67,
-                       yend = NA, lab = "Born 1947",
+ww2m_labs <- data.frame(yr = 1961:2014, age = 14:67,
+                       lab = "Born 1947",
                        base = 0, group = "Males", gen = "ww2m")
+ww2m_labs <- left_join(ww2m_labs, ages_pyr)
 
 
-xm_labs <- data.frame(yr = 1977:2014, y = -1.5, age = 0:37,
-                       yend = -1.2, lab = "Born 1970",
+ww2m_labs <- ww2m_labs %>% rename(y = pct) %>%
+    mutate(y = y - 0.05,
+           yend = y - 0.025)
+
+
+
+xm_labs <- data.frame(yr = 1977:2014, age = 0:37,
+                       lab = "Born 1970",
                        base = 0, group = "Males", gen = "x70m")
 
-ww1f_labs <- data.frame(yr = 1961:2008, y = 1.5, age = 41:88,
-                       yend = NA, lab = "Born 1920",
+xm_labs <- left_join(xm_labs, ages_pyr)
+
+
+xm_labs <- xm_labs %>% rename(y = pct) %>%
+    mutate(y = y - 0.05,
+           yend = y - 0.025)
+
+ww1f_labs <- data.frame(yr = 1961:2008, age = 41:88,
+                       lab = "Born 1920",
                        base = 0, group = "Females", gen = "ww1f")
 
 
-x64f_labs <- data.frame(yr = 1964:2014, y = 1.85, age = 0:50,
-                       yend = NA, lab = "Born 1964",
+ww1f_labs <- left_join(ww1f_labs, ages_pyr)
+
+ww1f_labs <- ww1f_labs %>% rename(y = pct) %>%
+    mutate(y = y + 0.3,
+           yend = y + 0.3)
+
+
+
+x64f_labs <- data.frame(yr = 1964:2014, age = 0:50,
+                       lab = "Born 1964",
                        base = 0, group = "Females", gen = "ww2")
+
+
+x64f_labs <- left_join(x64f_labs, ages_pyr)
+
+x64f_labs <- x64f_labs %>% rename(y = pct) %>%
+    mutate(y = y + 0.3,
+           yend = y + 0.3)
 
 
 gen_labs <- rbind(ww1m_labs, ww2m_labs, xm_labs, ww1f_labs, x64f_labs)
@@ -192,11 +227,8 @@ p <- ggplot(data = ages_pyr,
 p_pyr_ani <- p + geom_ribbon(alpha = 0.5, mapping = aes(ymin = base, ymax = pct, fill = group)) +
     geom_text(data = gen_labs,
               mapping = aes(x = age, y = y, label = lab),
-              size = rel(1.8)) +
-    geom_segment(data = gen_labs,
-              mapping = aes(x = age, xend = age, y = y + 0.19, yend = yend),
-              size = rel(0.2), color = "gray30") +
-    scale_y_continuous(labels = abs, limits = max(ages_lon$pct, na.rm = TRUE) * c(-1,1)) +
+              size = rel(1.8), hjust = 1) +
+    scale_y_continuous(labels = abs, limits = max(ages_lon$pct + 0.1, na.rm = TRUE) * c(-1,1)) +
     scale_x_continuous(breaks = seq(10, 80, 10)) +
     scale_fill_manual(values = bly_palette) +
     guides(fill = guide_legend(reverse = TRUE)) +
