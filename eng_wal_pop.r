@@ -190,10 +190,10 @@ p <- ggplot(data = ages_pyr,
                           frame = yr))
 
 p_pyr_ani <- p + geom_ribbon(alpha = 0.5, mapping = aes(ymin = base, ymax = pct, fill = group)) +
-    geom_text(data = subset(gen_labs, yr > 1984 & yr < 1988),
+    geom_text(data = gen_labs,
               mapping = aes(x = age, y = y, label = lab),
               size = rel(1.8)) +
-    geom_segment(data = subset(gen_labs, yr > 1984 & yr < 1988),
+    geom_segment(data = gen_labs,
               mapping = aes(x = age, xend = age, y = y + 0.19, yend = yend),
               size = rel(0.2), color = "gray30") +
     scale_y_continuous(labels = abs, limits = max(ages_lon$pct, na.rm = TRUE) * c(-1,1)) +
