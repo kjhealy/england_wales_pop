@@ -198,6 +198,12 @@ ages_pyr <- ages_lon
 ## Manually make the male scores negative
 ages_pyr$pct[ages_pyr$group == "Males"] <- -ages_lon$pct[ages_lon$group == "Males"]
 
+## use case_when to change to negative for males only
+ages_pyr <- ages_pyr %>% 
+  mutate(pct = case_when(
+    group == "Males" ~ -pct,
+    TRUE ~ pct
+  ))
 
 ## First just do one. E.g., 1968
 p <- ggplot(data = subset(ages_pyr, yr == 1968),
